@@ -28,7 +28,7 @@ public class GeneralUtils {
 	
 	public static void displayArray(double[] array) {
 		for(double d:array) {
-			System.out.print(formatOneDecimal(d)+"\t");
+			System.out.print(formatThreeDecimal(d)+"\t");
 		}System.out.println();
 	}
 	public static void displayArray(boolean[] array) {
