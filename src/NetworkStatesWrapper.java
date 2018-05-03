@@ -31,14 +31,14 @@ public class NetworkStatesWrapper {
 		}
 	}
 	
-	public static void main(String[] args) {
+	private static void forInfoDecay() {
 		int nPairs =99; // number of unique pairs = number of digits
 		int[] durs = {500, 1000, 1500, 2000, 2500, 
 						3000, 3500, 4000, 4500, 5000, 
 						6000, 7000, 8000, 9000, 10000,						
 						12000, 14000, 16000, 18000, 20000};
 		
-		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_v1";
+		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_v2";
 		//"C:\\Users\\sivav\\Dropbox\\HCO\\Periods\\E4\\External_Causal_v0";
 		
 		for(int i=0;i<durs.length;i++) {
@@ -47,7 +47,26 @@ public class NetworkStatesWrapper {
 			System.out.println();
 		}
 		
-
 	}
-
+	public static void main(String[] args) {		
+		int nPairs =99; // number of unique pairs = number of bits
+		int dur = 2500;
+		
+		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_v1";
+		//"C:\\Users\\sivav\\Dropbox\\HCO\\Periods\\E4\\External_Causal_v0";
+		
+		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(csvfileDir, nPairs, dur);
+		//wrapper.displayValidModes();
+		//System.out.println();
+		/*for(int i=0;i<wrapper.states.length;i++) {
+			System.out.print(wrapper.validModes[i]+"\t");
+			wrapper.states[i].displayNetworkState(false, false);
+			
+			System.out.println();
+		}*/
+		
+		Entropy ent = new Entropy(wrapper.states);
+		ent.displayStats(false);
+		
+	}
 }

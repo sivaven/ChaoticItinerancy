@@ -46,6 +46,11 @@ public class GeneralUtils {
 			System.out.print(formatTwoDecimal(d)+"\n");
 		}System.out.println();
 	}
+	public static void displayList(List<Integer> list) {
+		for(Integer d:list) {
+			System.out.print(d+"\t");
+		}System.out.println();
+	}
 	public static void displayArray(float[] array) {
 		for(float d:array) {
 			System.out.print(formatTwoDecimal(d)+"\t");

@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class NetworkState {
@@ -9,6 +10,7 @@ public class NetworkState {
 	private static final double THRESHOLD_MAX=0.5;
 	
 	OnePairPhaseTransitions[] pairs;
+	List<Integer> duplicates; // to hold a list of indices of duplicates of THIS state from wrapper classes
 	
 	public NetworkState(int nPairs, String csvfile, int dur) {
 		this.pairs=new OnePairPhaseTransitions[nPairs];
@@ -50,13 +52,13 @@ public class NetworkState {
 	public void displayNetworkState(boolean label, boolean stateTransitions) {
 		if(label) {
 			for(int i=0;i<this.pairs.length;i++) {
-				System.out.print(pairs[i].mode.toString()+" ");
+				System.out.print(pairs[i].mode.toString()+"\t");
 			}
-			System.out.print("\t");
+			System.out.print(";");
 		}
 		
 		for(int i=0;i<this.pairs.length;i++) {
-			System.out.print(pairs[i].mode.getValue()+" ");
+			System.out.print(pairs[i].mode.getValue()+"\t");
 		}
 		
 		if(stateTransitions) {
@@ -77,6 +79,22 @@ public class NetworkState {
 		}
 		return n;
 	}
+	
+	
+	public boolean matches(NetworkState state) {
+		boolean match=true;
+		for(int i=0;i<this.pairs.length;i++) {
+			if(this.pairs[i].mode.equals(PhaseLockMode.UNSYNC) || state.pairs[i].mode.equals(PhaseLockMode.UNSYNC)) {
+				continue;
+			}
+			if(!this.pairs[i].mode.equals(state.pairs[i].mode)) {
+				match = false;
+				break;
+			}
+		}
+		return match;
+	}
+	
 	public static void main(String[] args) {
 		int nPairs =99; // number of unique pairs = number of digits
 		int dur = 9000;
