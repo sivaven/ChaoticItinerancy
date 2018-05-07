@@ -32,7 +32,16 @@ public class OnePairPhaseTransitions {
 		populateStateCounts();
 		populatePhaseLockMode(thresholdMin, thresholdMax);
 	}
-	
+	public OnePairPhaseTransitions(double[] phase_diff, double rateThresh) {
+		phaseDiff = phase_diff;
+		timePointEnd=phase_diff.length;
+		
+		//populateBins(nBins);
+		//populateTransitionMatrix();
+		//populateTransitionRateMatrix();
+		populateStateCounts();
+		populatePhaseLockMode(rateThresh);
+	}
 	private void populateBins(int n) {		
 		
 		EmpiricalDistribution dist = new EmpiricalDistribution(n);
@@ -152,4 +161,28 @@ public class OnePairPhaseTransitions {
     	}
     }
 
+    private void populatePhaseLockMode(double thresh) {
+    	this.mode=PhaseLockMode.UNSYNC;
+    	boolean found = false;
+    	for(int i=0;i<this.stateCountNormed.length;i++) {
+    		
+    	//	if(stateCountNormed[i]>threshold_max) 
+    			found = true;
+    			for(int j=0;j<this.stateCountNormed.length;j++) {    				
+    				if(i==j) continue;
+    				//min threshold crit. is not applied to the adjacent transient partitions 
+    				//(cuz some of them are not transient, a fixed boundary partition doesnt capture this)
+    				if(j==i+1 || j==i-1) continue;
+    				if(i==0 && j==5) continue;
+    				if(i==5 && j==0) continue;
+    				
+    				if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
+    			}
+    			if(found==true) {
+    				this.mode=PhaseLockMode.getPhaseLockMode(i);
+    				break;
+    			}
+    		
+    	}
+    }
 }

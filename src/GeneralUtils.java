@@ -17,7 +17,7 @@ public class GeneralUtils {
 		return list;
 	}
 	
-	public static double[] listToArrayDouble(ArrayList<Double> list) {
+	public static double[] listToArrayDouble(List<Double> list) {
 		double[] array = new double[list.size()];
 		int i=0;
 		for(double element: list) {

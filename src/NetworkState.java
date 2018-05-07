@@ -2,12 +2,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class NetworkState {
-	private static final double THRESHOLD_MIN=0.25;
+	private static final double THRESHOLD_MIN=0.1;
 	private static final double THRESHOLD_MAX=0.5;
+	
+	private static final double RATE_THRESH=5.0d;
 	
 	OnePairPhaseTransitions[] pairs;
 	List<Integer> duplicates; // to hold a list of indices of duplicates of THIS state from wrapper classes
@@ -17,11 +20,28 @@ public class NetworkState {
 		double[][] phdiffs = populatePhDiffs(csvfile, nPairs, dur);
 		
 		for(int i=0;i<nPairs;i++) {
-			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], THRESHOLD_MIN, THRESHOLD_MAX);
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
 		}
 	}
 	
-	private double[][] populatePhDiffs(String fileName, int nPairs, int dur) {
+	public NetworkState(int nPairs, String csvfile) {
+		this.pairs=new OnePairPhaseTransitions[nPairs];
+		double[][] phdiffs = populatePhDiffs(csvfile, nPairs);
+		
+		for(int i=0;i<nPairs;i++) {
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
+		}
+	}
+	
+	public NetworkState(int nPairs, double[][] phdiffs) {
+		this.pairs=new OnePairPhaseTransitions[nPairs];
+		
+		for(int i=0;i<nPairs;i++) {
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
+		}
+	}
+	
+	private static double[][] populatePhDiffs(String fileName, int nPairs, int dur) {
 		double[][] phaseDiff = new double[nPairs][dur];
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -49,6 +69,41 @@ public class NetworkState {
 		return phaseDiff;
 	}
 
+	public static double[][] populatePhDiffs(String fileName, int nPairs) {
+		//System.out.println(fileName);
+		double[][] phaseDiff = new double[nPairs][];
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String str = null;
+			
+			List<Double> list;
+			for(int i=0;i<nPairs;i++) {
+				str = br.readLine();	
+				
+				//System.out.println(str);
+				
+				list=new ArrayList<>();
+				StringTokenizer st = new StringTokenizer(str, ",");
+				String token = null;				
+							
+				while(st.hasMoreTokens()) {		
+					token=  st.nextToken();	
+					double radians = Double.parseDouble(token);
+					if(radians<0)
+						radians=2*Math.PI - Math.abs(radians);				
+					list.add(radians);
+				}						
+				phaseDiff[i]=GeneralUtils.listToArrayDouble(list);
+			}			
+			br.close();			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return phaseDiff;
+	}
+	
 	public void displayNetworkState(boolean label, boolean stateTransitions) {
 		if(label) {
 			for(int i=0;i<this.pairs.length;i++) {
@@ -80,6 +135,16 @@ public class NetworkState {
 		return n;
 	}
 	
+	public int numberOfLostModes(NetworkState previousDurState) {
+		int n=0;
+		for(int i=0;i<pairs.length;i++) {
+			if(pairs[i].mode.equals(PhaseLockMode.UNSYNC) || previousDurState.pairs[i].mode.equals(PhaseLockMode.UNSYNC)) {
+				pairs[i].mode = PhaseLockMode.UNSYNC;
+				n++;
+			}				
+		}
+		return n;
+	}
 	
 	public boolean matches(NetworkState state) {
 		boolean match=true;

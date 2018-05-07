@@ -4,12 +4,14 @@ import java.util.List;
 public class Entropy {
 	public NetworkState[] states;
 	public List<Double> probability;
+	public double entropy;
 	
 	public Entropy(NetworkState[] states){
 		this.states = states;
 		this.probability = new ArrayList<>();
 		populateStateDuplicates();
 		calculateProbabilities();
+		calculateEntropy();
 	}
 	
 	/*
@@ -45,6 +47,14 @@ public class Entropy {
 		}
 	}
 	
+	public void calculateEntropy() {
+		double exp=0;
+		for(int i=0;i<probability.size();i++) {
+			double P =  probability.get(i);
+			exp+= P * Math.log(P);
+		}
+		entropy = -exp;
+	}
 	public void displayStats(boolean duplicates) {
 		if(duplicates)
 		for(int i=0;i<this.states.length;i++) {
