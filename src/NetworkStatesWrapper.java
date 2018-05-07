@@ -142,7 +142,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=100;dt<=20000;dt=dt+100) {
+		for(int dt=250;dt<=20000;dt=dt+250) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt);
 			
