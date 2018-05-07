@@ -238,12 +238,12 @@ public class NetworkStatesWrapper {
 	public static void main(String[] args) {		
 		int start_dur=Integer.parseInt(args[0]);
 		int dur_plus = Integer.parseInt(args[1]);
-		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
+		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
 		String opFileL1 = csvfileDir+"_splm_"+start_dur;
 		String opFileL2 = csvfileDir+"_decay_"+start_dur;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
-			//writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
+			writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
 			writeForLEVEL2_Figure(new FileWriter(opFileL2), perturbs);
 		}catch(Exception e) {
 			e.printStackTrace();
