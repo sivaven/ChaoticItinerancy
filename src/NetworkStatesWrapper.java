@@ -189,14 +189,20 @@ public class NetworkStatesWrapper {
 				//Collections.sort(durations);
 				
 				if(i==0) { //header
+					boolean first = true;
 					for(int dur:durations) {
-						fw.write(dur+"\t");
+						if(!first) fw.write("\t");
+						fw.write(dur);
+						first = false;
 					}
 					fw.write("\n");
 				}
+				boolean first = true;
 				for(int dur:durations) {					
 					int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
-					fw.write(splm+"\t");
+					if(!first) fw.write("\t");
+					fw.write(splm);
+					first = false;
 				}
 				fw.write("\n");
 				fw.flush();
