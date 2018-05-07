@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Set;
 
 public class NetworkStatesWrapper {
 	
@@ -129,36 +130,29 @@ public class NetworkStatesWrapper {
 			previous_wrapper = wrapper;
 		}		
 	}
-	private static void forInfoDecay2(boolean isLocal) {
+	private static Perturbation[] forInfoDecay2(String ipFileDir) {
 		int nPairs =99; // number of unique pairs = number of digits
-		System.out.println("isLocal?" + isLocal);
-		
-		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_v1";
-		String opFile =  csvfileDir+"_splms";
-		
-		if(!isLocal) {
-			csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
-			opFile =  csvfileDir+"_splms";
-		}
 		
 		System.out.println("Reading data...");
-		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(csvfileDir, nPairs);		
-		FileWriter fw;
-		try {
-			fw = new FileWriter(opFile, false);
-			for(int dt=100;dt<=20000;dt=dt+100) {
-				System.out.println(dt + "completed: ");
-				NetworkState[] _states = wrapper.constructNetworkStates(dt);
-				int[] single_phase_locked_modes = wrapper.calculateSinglePhaseLockedModes(_states);
-				writeData(dt, single_phase_locked_modes, fw);
-				_states= null;
-				single_phase_locked_modes=null;
-			}		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
+		System.out.println("Reading complete...");
 		
+		Perturbation[] nperturbs = new Perturbation[wrapper.phdifs.length];
+		for(int i=0;i<nperturbs.length;i++) {
+			nperturbs[i] = new Perturbation();
+		}		
+			
+		for(int dt=100;dt<=20000;dt=dt+100) {
+			System.out.println(dt + "completed: ");
+			NetworkState[] _states = wrapper.constructNetworkStates(dt);
+			
+			for(int i=0;i<nperturbs.length;i++) {					
+				nperturbs[i].addData(dt, _states[i]);
+			}
+			_states= null;
+		}				
 		
+		return nperturbs;
 	}
 	
 	private static void singleDurStates() {
@@ -179,12 +173,37 @@ public class NetworkStatesWrapper {
 		}*/
 	}
 	public static void main(String[] args) {		
-		if(args.length==0)
-			forInfoDecay2(true);
 		
+		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
+		String opFile = csvfileDir+"_splm_2";
+		
+		try {
+			FileWriter fw = new FileWriter(opFile);		
+		
+			Perturbation[] perturbs = forInfoDecay2(csvfileDir);
+			for(int i=0;i<perturbs.length;i++) {
+				System.out.println("perturbation.."+(i+1));
+				Set<Integer> durations = perturbs[i].getAllDurations();
 				
-		if(args.length>0)
-			forInfoDecay2(false);
+				if(i==0) { //header
+					for(int dur:durations) {
+						fw.write(dur+"\t");
+					}
+					fw.write("\n");
+				}
+				for(int dur:durations) {					
+					int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
+					fw.write(splm+"\t");
+				}
+				fw.write("\n");
+				fw.flush();
+			}
+			fw.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
 	}
 }
