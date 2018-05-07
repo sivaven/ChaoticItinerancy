@@ -1,5 +1,5 @@
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,7 +7,7 @@ public class Perturbation {
 	Map<Integer, NetworkState> map;
 	
 	Perturbation(){
-		map = new HashMap<>();
+		map = new LinkedHashMap<>();
 	}
 	
 	public void addData(int dur, NetworkState state) {

@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
 public class NetworkStatesWrapper {
@@ -185,6 +186,7 @@ public class NetworkStatesWrapper {
 			for(int i=0;i<perturbs.length;i++) {
 				System.out.println("perturbation.."+(i+1));
 				Set<Integer> durations = perturbs[i].getAllDurations();
+				//Collections.sort(durations);
 				
 				if(i==0) { //header
 					for(int dur:durations) {
