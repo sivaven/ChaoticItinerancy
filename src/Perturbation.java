@@ -43,4 +43,12 @@ public class Perturbation {
 	public Set<Integer> getAllDurations() {		
 		return map.keySet();
 	}
+	
+	public int numberOfMatchingModes(int dur, NetworkState repState) { //what is the number of modes in <dur> that matches with <repState>
+		int nMatches = 0;
+		NetworkState state = map.get(dur);			
+		nMatches= state.numberOfMatches(repState);		
+		
+		return nMatches;
+	}
 }

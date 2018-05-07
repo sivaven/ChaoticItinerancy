@@ -173,46 +173,80 @@ public class NetworkStatesWrapper {
 			System.out.println();
 		}*/
 	}
+	
+	private static void writeForLEVEL1_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			Set<Integer> durations = perturbs[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(i==0) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+			}
+			boolean first = true;
+			for(int dur:durations) {					
+				int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
+				if(!first) fw.write("\t");
+				fw.write(""+splm);
+				first = false;
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();
+		
+		
+	}
+	
+	private static void writeForLEVEL2_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();			
+			if(i==0) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+			}
+			boolean first = true;
+			
+			for(int dur:durations) {					
+				int decay = perturbs[i].numberOfMatchingModes(dur, repState);
+				if(!first) fw.write("\t");
+				fw.write(""+decay);
+				first = false;
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();
+		
+		
+	}
 	public static void main(String[] args) {		
 		int start_dur=Integer.parseInt(args[0]);
 		int dur_plus = Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
-		String opFile = csvfileDir+"_splm_"+start_dur;
-		
-		try {
-			FileWriter fw = new FileWriter(opFile);		
-		
+		String opFileL1 = csvfileDir+"_splm_"+start_dur;
+		String opFileL2 = csvfileDir+"_decay_"+start_dur;
+		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
-			for(int i=0;i<perturbs.length;i++) {
-				System.out.println("perturbation.."+(i+1));
-				Set<Integer> durations = perturbs[i].getAllDurations();
-				//Collections.sort(durations);
-				
-				if(i==0) { //header
-					boolean first = true;
-					for(int dur:durations) {
-						if(!first) fw.write("\t");
-						fw.write(""+dur);
-						first = false;
-					}
-					fw.write("\n");
-				}
-				boolean first = true;
-				for(int dur:durations) {					
-					int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
-					if(!first) fw.write("\t");
-					fw.write(""+splm);
-					first = false;
-				}
-				fw.write("\n");
-				fw.flush();
-			}
-			fw.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			//writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
+			writeForLEVEL2_Figure(new FileWriter(opFileL2), perturbs);
+		}catch(Exception e) {
 			e.printStackTrace();
-		}	
-		
+		}
 	}
 }

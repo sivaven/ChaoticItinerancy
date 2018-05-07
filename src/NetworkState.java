@@ -160,6 +160,15 @@ public class NetworkState {
 		return match;
 	}
 	
+	public int numberOfMatches(NetworkState state) {
+		int nmatches =0;
+		for(int i=0;i<this.pairs.length;i++) {
+			if(!state.pairs[i].mode.equals(PhaseLockMode.UNSYNC) && this.pairs[i].mode.equals(state.pairs[i].mode)) {
+				nmatches+=1;
+			}
+		}
+		return nmatches;
+	}
 	public static void main(String[] args) {
 		int nPairs =99; // number of unique pairs = number of digits
 		int dur = 9000;
