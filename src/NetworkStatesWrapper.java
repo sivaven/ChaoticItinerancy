@@ -130,7 +130,7 @@ public class NetworkStatesWrapper {
 			previous_wrapper = wrapper;
 		}		
 	}
-	private static Perturbation[] forInfoDecay2(String ipFileDir, int dt_start ) {
+	private static Perturbation[] forInfoDecay2(String ipFileDir, int dt_start , int dt_plus) {
 		int nPairs =99; // number of unique pairs = number of digits
 		
 		System.out.println("Reading data...");
@@ -142,7 +142,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=dt_start+100;dt<=dt_start+5000;dt=dt+100) {
+		for(int dt=dt_start+100;dt<=dt_start+5000;dt=dt+dt_plus) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt);
 			
@@ -174,14 +174,14 @@ public class NetworkStatesWrapper {
 	}
 	public static void main(String[] args) {		
 		int start_dur=Integer.parseInt(args[0]);
-		
+		int dur_plus = Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
 		String opFile = csvfileDir+"_splm_"+start_dur;
 		
 		try {
 			FileWriter fw = new FileWriter(opFile);		
 		
-			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur);
+			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
 			for(int i=0;i<perturbs.length;i++) {
 				System.out.println("perturbation.."+(i+1));
 				Set<Integer> durations = perturbs[i].getAllDurations();
