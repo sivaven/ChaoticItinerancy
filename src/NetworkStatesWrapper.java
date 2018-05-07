@@ -93,10 +93,14 @@ public class NetworkStatesWrapper {
 	}
 	
 	public static void writeData(int duration, int[] Y, FileWriter fw) throws IOException {	
+		double mean = 0;
 			fw.write(""+duration);
 			for(int i=0;i<Y.length;i++) {
 				fw.write("\t"+Y[i]);
+				mean += Y[i];
 			}
+			mean = mean/(Y.length*1.0d);
+			fw.write("\t"+ mean);
 			fw.write("\n");
 			fw.flush();			
 	}
