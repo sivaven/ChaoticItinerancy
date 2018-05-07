@@ -192,7 +192,7 @@ public class NetworkStatesWrapper {
 					boolean first = true;
 					for(int dur:durations) {
 						if(!first) fw.write("\t");
-						fw.write(dur);
+						fw.write(""+dur);
 						first = false;
 					}
 					fw.write("\n");
@@ -201,7 +201,7 @@ public class NetworkStatesWrapper {
 				for(int dur:durations) {					
 					int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
 					if(!first) fw.write("\t");
-					fw.write(splm);
+					fw.write(""+splm);
 					first = false;
 				}
 				fw.write("\n");
