@@ -175,11 +175,10 @@ public class NetworkStatesWrapper {
 		}*/
 	}
 	public static void main(String[] args) {		
+		if(args.length==0)
+			forInfoDecay2(true);
 		
-		forInfoDecay2(true);
-		
-		System.out.println(args.length);
-		
+				
 		if(args.length>0)
 			forInfoDecay2(false);
 		
