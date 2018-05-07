@@ -133,7 +133,7 @@ public class NetworkStatesWrapper {
 		String opFile =  csvfileDir+"_splms";
 		
 		if(!isLocal) {
-			csvfileDir = "\\home\\siyappan\\NeuroProjects\\Periods\\E4\\External_Causal_v1";
+			csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_v1";
 			opFile =  csvfileDir+"_splms";
 		}
 		
