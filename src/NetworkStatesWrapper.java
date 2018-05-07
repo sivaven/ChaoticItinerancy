@@ -127,6 +127,7 @@ public class NetworkStatesWrapper {
 	}
 	private static void forInfoDecay2(boolean isLocal) {
 		int nPairs =99; // number of unique pairs = number of digits
+		System.out.println("isLocal?" + isLocal);
 		
 		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_v1";
 		String opFile =  csvfileDir+"_splms";
