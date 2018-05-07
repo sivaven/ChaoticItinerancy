@@ -29,6 +29,9 @@ public class NetworkStatesWrapper {
 	}
 	public NetworkStatesWrapper(String dirOfCSVFiles, int npairs) {
 		File f = new File(dirOfCSVFiles);
+		if(!f.exists() || !f.isDirectory()) {
+			System.out.println(f.getAbsolutePath() +"  doesnt exist OR not a directory");
+		}
 		File[] files = f.listFiles();
 		
 		nPairs = npairs;		
