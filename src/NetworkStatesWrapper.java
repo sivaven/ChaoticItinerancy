@@ -160,9 +160,9 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=100;dt<=5000;dt=dt+100) {
+		for(int dt=0;dt<=20000;dt=dt+1000) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(dt, 100);
+			NetworkState[] _states = wrapper.constructNetworkStates(dt, 1000);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt, _states[i]);
@@ -394,12 +394,12 @@ public class NetworkStatesWrapper {
 	}
 	
 	public static void main(String[] args) {
-		int[] ignoreidcs = {79,93,94,				26,				65,				0,				3,				4,				7,
+		int[] ignoreidcs = {};/* {79,93,94,				26,				65,				0,				3,				4,				7,
 				9,				13,				36,				41,				46,				64,				68,				72,
-				75,				83,				84};
+				75,				83,				84};*/
 		PertsToIgnore=GeneralUtils.arrayToListInteger(ignoreidcs);
 		
-		int start_dur=100;//Integer.parseInt(args[0]);
+		int start_dur=1000;//Integer.parseInt(args[0]);
 		int dur_plus = 0;//Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
 		String opFileL1 = csvfileDir+"_MW1_"+start_dur;
