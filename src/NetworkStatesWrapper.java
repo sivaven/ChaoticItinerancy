@@ -175,12 +175,18 @@ public class NetworkStatesWrapper {
 	}
 	
 	private static void writeForLEVEL1_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
 			System.out.println("perturbation.."+(i+1));
+			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			if(repState.pairs.length  - repState.numberOfUnSyncModes() <50) continue;
+			
 			Set<Integer> durations = perturbs[i].getAllDurations();
 			//Collections.sort(durations);
 			
-			if(i==0) { //header
+			if(!headernotwritten) { //header
 				boolean first = true;
 				for(int dur:durations) {
 					if(!first) fw.write("\t");
@@ -188,6 +194,7 @@ public class NetworkStatesWrapper {
 					first = false;
 				}
 				fw.write("\n");
+				headernotwritten=false;
 			}
 			boolean first = true;
 			for(int dur:durations) {					
@@ -205,13 +212,16 @@ public class NetworkStatesWrapper {
 	}
 	
 	private static void writeForLEVEL2_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
 			System.out.println("perturbation.."+(i+1));
 			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
+			if(repState.pairs.length  - repState.numberOfUnSyncModes() <50) continue;
+			
 			Set<Integer> durations = perturbs[i].getAllDurations();			
-			if(i==0) { //header
+			if(!headernotwritten) { //header
 				boolean first = true;
 				for(int dur:durations) {
 					if(!first) fw.write("\t");
@@ -219,6 +229,7 @@ public class NetworkStatesWrapper {
 					first = false;
 				}
 				fw.write("\n");
+				headernotwritten=false;
 			}
 			boolean first = true;
 			
@@ -239,8 +250,8 @@ public class NetworkStatesWrapper {
 		int start_dur=Integer.parseInt(args[0]);
 		int dur_plus = Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_splm_"+start_dur;
-		String opFileL2 = csvfileDir+"_decay_"+start_dur;
+		String opFileL1 = csvfileDir+"_splm_50"+start_dur;
+		String opFileL2 = csvfileDir+"_decayR_50"+start_dur;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
 			writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
