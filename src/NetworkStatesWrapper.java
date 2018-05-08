@@ -1,11 +1,12 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class NetworkStatesWrapper {
-	
+	private static List<Integer> PertsToIgnore;
 	double[][][] phdifs;
 	
 	public NetworkState[] states;
@@ -159,9 +160,9 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=500;dt<=20000;dt=dt+500) {
+		for(int dt=100;dt<=5000;dt=dt+100) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(dt, 500);
+			NetworkState[] _states = wrapper.constructNetworkStates(dt, 100);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt, _states[i]);
@@ -267,6 +268,7 @@ public class NetworkStatesWrapper {
 	private static void writeFor_MW1(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
+			if(PertsToIgnore.contains(i)) continue;
 			System.out.println("perturbation.."+(i+1));
 			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
@@ -307,6 +309,7 @@ public class NetworkStatesWrapper {
 	private static void writeFor_MW2(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
+			if(PertsToIgnore.contains(i)) continue;
 			System.out.println("perturbation.."+(i+1));
 			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
@@ -349,8 +352,10 @@ public class NetworkStatesWrapper {
 	 * moving window : total number of sync modes that match first window
 	 */
 	private static void writeFor_MW3(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
+			if(PertsToIgnore.contains(i)) continue;
 			System.out.println("perturbation.."+(i+1));
 			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
@@ -388,8 +393,13 @@ public class NetworkStatesWrapper {
 		fw.close();	
 	}
 	
-	public static void main(String[] args) {		
-		int start_dur=500;//Integer.parseInt(args[0]);
+	public static void main(String[] args) {
+		int[] ignoreidcs = {79,93,94,				26,				65,				0,				3,				4,				7,
+				9,				13,				36,				41,				46,				64,				68,				72,
+				75,				83,				84};
+		PertsToIgnore=GeneralUtils.arrayToListInteger(ignoreidcs);
+		
+		int start_dur=100;//Integer.parseInt(args[0]);
 		int dur_plus = 0;//Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
 		String opFileL1 = csvfileDir+"_MW1_"+start_dur;
