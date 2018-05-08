@@ -181,7 +181,7 @@ public class NetworkStatesWrapper {
 			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
-			if(repState.pairs.length  - repState.numberOfUnSyncModes() <75) continue;
+			if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
 			
 			Set<Integer> durations = perturbs[i].getAllDurations();
 			//Collections.sort(durations);
@@ -218,7 +218,7 @@ public class NetworkStatesWrapper {
 			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
-			if(repState.pairs.length  - repState.numberOfUnSyncModes() <75) continue;
+			if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
 			
 			Set<Integer> durations = perturbs[i].getAllDurations();			
 			if(headernotwritten) { //header
@@ -250,8 +250,8 @@ public class NetworkStatesWrapper {
 		int start_dur=Integer.parseInt(args[0]);
 		int dur_plus = Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_splm_5"+start_dur;
-		String opFileL2 = csvfileDir+"_decayR_5"+start_dur;
+		String opFileL1 = csvfileDir+"_splm_8"+start_dur;
+		String opFileL2 = csvfileDir+"_decayR_8"+start_dur;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
 			writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
