@@ -70,7 +70,7 @@ public class NetworkStatesWrapper {
 			double[][] phdiffsTrimmed = new double[nPairs][duration];		
 			for(int j=0;j<nPairs;j++) {
 				for(int k=startpt;k<startpt+duration;k++) {
-					phdiffsTrimmed[j][k] = phdifs[i][j][k];
+					phdiffsTrimmed[j][k-startpt] = phdifs[i][j][k];
 				}
 			}
 			
@@ -159,7 +159,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=0;dt<=20000;dt=dt+500) {
+		for(int dt=500;dt<=20000;dt=dt+500) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt, 500);
 			
