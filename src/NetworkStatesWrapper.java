@@ -143,7 +143,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=dt_start+500;dt<=dt_start+15000;dt=dt+dt_plus) {
+		for(int dt=dt_start;dt<=20000;dt=dt+dt_start) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt);
 			
@@ -243,19 +243,147 @@ public class NetworkStatesWrapper {
 			fw.flush();
 		}
 		fw.close();
+	}
+	
+	/*
+	 * moving window : total number of sync modes
+	 */
+	private static void writeFor_MW1(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			for(int dur:durations) {					
+				int splm = perturbs[i].calculateSinglePhaseLockedMode(dur);
+				if(!first) fw.write("\t");
+				fw.write(""+splm);
+				first = false;
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();
 		
 		
 	}
+	
+	/*
+	 * moving window : total number of sync modes that match PREVIOUS window
+	 */
+	private static void writeFor_MW2(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			NetworkState previousState = null;
+			for(int dur:durations) {					
+				int countofmatch = 0;
+				if(!first) {
+					countofmatch = perturbs[i].getNetworkState(dur).numberOfMatches(previousState);
+				}
+				if(!first) fw.write("\t");
+				fw.write(""+countofmatch);
+				first = false;
+				
+				previousState = perturbs[i].getNetworkState(dur);
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();		
+	}
+	
+	/*
+	 * moving window : total number of sync modes that match first window
+	 */
+	private static void writeFor_MW3(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			NetworkState state=null;
+			for(int dur:durations) {
+				int count = 0;
+				if(first) {
+					state = perturbs[i].getNetworkState(dur);
+				}
+				count = perturbs[i].getNetworkState(dur).numberOfMatches(state);
+				if(!first) fw.write("\t");
+				fw.write(""+count);
+				first = false;
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();	
+	}
+	
 	public static void main(String[] args) {		
-		int start_dur=Integer.parseInt(args[0]);
-		int dur_plus = Integer.parseInt(args[1]);
+		int start_dur=500;//Integer.parseInt(args[0]);
+		int dur_plus = 0;//Integer.parseInt(args[1]);
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_splm_8"+start_dur;
-		String opFileL2 = csvfileDir+"_decayR_8"+start_dur;
+		String opFileL1 = csvfileDir+"_MW1_"+start_dur;
+		String opFileL2 = csvfileDir+"_MW2_"+start_dur;
+		String opFileL3 = csvfileDir+"_MW3_"+start_dur;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
-			writeForLEVEL1_Figure(new FileWriter(opFileL1), perturbs);
-			writeForLEVEL2_Figure(new FileWriter(opFileL2), perturbs);
+			writeFor_MW1(new FileWriter(opFileL1), perturbs);
+			writeFor_MW2(new FileWriter(opFileL2), perturbs);
+			writeFor_MW3(new FileWriter(opFileL3), perturbs);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
