@@ -62,6 +62,22 @@ public class NetworkStatesWrapper {
 		return states;
 	}
 	
+	public NetworkState[] constructNetworkStates(int startpt, int duration) { 
+		NetworkState[] states = new NetworkState[phdifs.length];	
+		
+		for(int i=0;i<phdifs.length;i++) {			
+			
+			double[][] phdiffsTrimmed = new double[nPairs][duration];		
+			for(int j=0;j<nPairs;j++) {
+				for(int k=startpt;k<startpt+duration;k++) {
+					phdiffsTrimmed[j][k] = phdifs[i][j][k];
+				}
+			}
+			
+			states[i] = new NetworkState(nPairs,phdiffsTrimmed);
+		}		
+		return states;
+	}
 	public int[] calculateSinglePhaseLockedModes(NetworkState[] states) {
 		int[] nSinglePhaseLockedModes = new int[states.length];
 		for(int i=0;i<states.length;i++) {
@@ -143,9 +159,9 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=dt_start;dt<=16000;dt=dt+dt_start) {
+		for(int dt=0;dt<=20000;dt=dt+500) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(dt);
+			NetworkState[] _states = wrapper.constructNetworkStates(dt, 500);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt, _states[i]);
