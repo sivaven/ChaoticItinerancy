@@ -476,9 +476,9 @@ public class NetworkStatesWrapper {
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
-			//writeFor_MW1(new FileWriter(opFileL1), perturbs);
-			//writeFor_MW2(new FileWriter(opFileL2), perturbs);
-			//writeFor_MW3(new FileWriter(opFileL3), perturbs);
+			writeFor_MW1(new FileWriter(opFileL1), perturbs);
+			writeFor_MW2(new FileWriter(opFileL2), perturbs);
+			writeFor_MW3(new FileWriter(opFileL3), perturbs);
 			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 		}catch(Exception e) {
 			e.printStackTrace();
