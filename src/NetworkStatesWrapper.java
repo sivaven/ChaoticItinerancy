@@ -418,6 +418,47 @@ public class NetworkStatesWrapper {
 		fw.close();	
 	}
 	
+	/*
+	 * moving window : total number of sync modes that match rep state
+	 */
+	private static void writeFor_MW4(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+		
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbs.length;i++) {
+			if(PertsToIgnore.contains(i)) continue;
+			System.out.println("perturbation.."+(i+1));
+			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			
+			for(int dur:durations) {
+				int count = 0;				
+				count = perturbs[i].getNetworkState(dur).numberOfMatches(repState);
+				if(!first) fw.write("\t");
+				fw.write(""+count);
+				first = false;
+			}
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();	
+	}
 	public static void main(String[] args) {
 		int[] ignoreidcs = {};/* {79,93,94,				26,				65,				0,				3,				4,				7,
 				9,				13,				36,				41,				46,				64,				68,				72,
@@ -432,11 +473,13 @@ public class NetworkStatesWrapper {
 		String opFileL1 = csvfileDir+"_nsm_"+mwlength;
 		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
+		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
 		try {		
 			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
-			writeFor_MW1(new FileWriter(opFileL1), perturbs);
-			writeFor_MW2(new FileWriter(opFileL2), perturbs);
-			writeFor_MW3(new FileWriter(opFileL3), perturbs);
+			//writeFor_MW1(new FileWriter(opFileL1), perturbs);
+			//writeFor_MW2(new FileWriter(opFileL2), perturbs);
+			//writeFor_MW3(new FileWriter(opFileL3), perturbs);
+			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
