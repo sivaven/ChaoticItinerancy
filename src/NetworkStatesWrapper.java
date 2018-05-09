@@ -173,6 +173,31 @@ public class NetworkStatesWrapper {
 		return nperturbs;
 	}
 	
+	private static Perturbation[] forInfoDecay2(String ipFileDir, int mwLength) {
+		int nPairs =99; // number of unique pairs = number of digits
+		
+		System.out.println("Reading data...");
+		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
+		System.out.println("Reading complete...");
+		
+		Perturbation[] nperturbs = new Perturbation[wrapper.phdifs.length];
+		for(int i=0;i<nperturbs.length;i++) {
+			nperturbs[i] = new Perturbation();
+		}		
+			
+		for(int dt=0;dt<=20000;dt=dt+mwLength) {
+			System.out.println(dt + "completed: ");
+			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength);
+			
+			for(int i=0;i<nperturbs.length;i++) {					
+				nperturbs[i].addData(dt+mwLength, _states[i]);
+			}
+			_states= null;
+		}				
+		
+		return nperturbs;
+	}
+	
 	private static void singleDurStates() {
 		int nPairs =99; // number of unique pairs = number of bits
 		int dur = 2500;
@@ -399,14 +424,16 @@ public class NetworkStatesWrapper {
 				75,				83,				84};*/
 		PertsToIgnore=GeneralUtils.arrayToListInteger(ignoreidcs);
 		
-		int start_dur=1000;//Integer.parseInt(args[0]);
-		int dur_plus = 0;//Integer.parseInt(args[1]);
+		//int start_dur=1000;//Integer.parseInt(args[0]);
+	//	int dur_plus = 0;//Integer.parseInt(args[1]);
+		int mwlength = Integer.parseInt(args[0]);
+		
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_MW1_"+start_dur;
-		String opFileL2 = csvfileDir+"_MW2_"+start_dur;
-		String opFileL3 = csvfileDir+"_MW3_"+start_dur;
+		String opFileL1 = csvfileDir+"_nsm_"+mwlength;
+		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
+		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
 		try {		
-			Perturbation[] perturbs = forInfoDecay2(csvfileDir, start_dur, dur_plus);
+			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
 			writeFor_MW1(new FileWriter(opFileL1), perturbs);
 			writeFor_MW2(new FileWriter(opFileL2), perturbs);
 			writeFor_MW3(new FileWriter(opFileL3), perturbs);
