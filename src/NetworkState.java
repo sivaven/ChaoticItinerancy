@@ -10,7 +10,7 @@ public class NetworkState {
 	private static final double THRESHOLD_MIN=0.1;
 	private static final double THRESHOLD_MAX=0.5;
 	
-	private static final double RATE_THRESH=2.0d;
+	public static double RATE_THRESH=2.0d;
 	
 	OnePairPhaseTransitions[] pairs;
 	List<Integer> duplicates; // to hold a list of indices of duplicates of THIS state from wrapper classes

@@ -477,8 +477,10 @@ public class NetworkStatesWrapper {
 		*/
 		int duration = Integer.parseInt(args[0]);
 		int length = Integer.parseInt(args[1]);
-		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+duration;
-		String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+duration;
+		NetworkState.RATE_THRESH = Double.parseDouble(args[2]);
+		
+		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
+		String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+NetworkState.RATE_THRESH;
 		
 		try {		
 			//moving window
