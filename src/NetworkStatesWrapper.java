@@ -148,7 +148,7 @@ public class NetworkStatesWrapper {
 			previous_wrapper = wrapper;
 		}		
 	}
-	private static Perturbation[] forInfoDecay2(String ipFileDir, int dt_start , int dt_plus) {
+	private static Perturbation[] forInfoDecayAccum(String ipFileDir, int increments, int length) {
 		int nPairs =99; // number of unique pairs = number of digits
 		
 		System.out.println("Reading data...");
@@ -160,14 +160,14 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=0;dt<=20000;dt=dt+1000) {
+		for(int dt=increments;dt<=length;dt=dt+increments) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(dt, 1000);
+			NetworkState[] _states = wrapper.constructNetworkStates(0, dt);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt, _states[i]);
 			}
-			_states= null;
+			//_states= null;
 		}				
 		
 		return nperturbs;
@@ -220,10 +220,10 @@ public class NetworkStatesWrapper {
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
 			System.out.println("perturbation.."+(i+1));
-			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
-			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
-			if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
 			
 			Set<Integer> durations = perturbs[i].getAllDurations();
 			//Collections.sort(durations);
@@ -260,7 +260,7 @@ public class NetworkStatesWrapper {
 			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
-			if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
+			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
 			
 			Set<Integer> durations = perturbs[i].getAllDurations();			
 			if(headernotwritten) { //header
@@ -467,19 +467,32 @@ public class NetworkStatesWrapper {
 		
 		//int start_dur=1000;//Integer.parseInt(args[0]);
 	//	int dur_plus = 0;//Integer.parseInt(args[1]);
-		int mwlength = Integer.parseInt(args[0]);
+		//int mwlength = Integer.parseInt(args[0]);
 		
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_nsm_"+mwlength;
+	/*	String opFileL1 = csvfileDir+"_nsm_"+mwlength;
 		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
+		*/
+		int duration = Integer.parseInt(args[0]);
+		int length = Integer.parseInt(args[1]);
+		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+duration;
+		String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+duration;
+		
 		try {		
-			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
-			writeFor_MW1(new FileWriter(opFileL1), perturbs);
+			//moving window
+			//Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, mwlength);
+			/*writeFor_MW1(new FileWriter(opFileL1), perturbs);
 			writeFor_MW2(new FileWriter(opFileL2), perturbs);
 			writeFor_MW3(new FileWriter(opFileL3), perturbs);
-			writeFor_MW4(new FileWriter(opFileL4), perturbs);
+			writeFor_MW4(new FileWriter(opFileL4), perturbs);*/
+			
+			//accum time
+			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
+			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);
+			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs);
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
