@@ -1,9 +1,11 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 public class NetworkStatesWrapper {
 	private static List<Integer> PertsToIgnore;
@@ -216,6 +218,40 @@ public class NetworkStatesWrapper {
 		}*/
 	}
 	
+	private static void writeRepStates(FileWriter fw,  Perturbation[] perturbs) {
+		try {
+			for(int i=0;i<perturbs.length;i++) {
+				int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+				NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+				fw.write(repState.getCsvString()+"\n");
+			}
+			fw.close();	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	private static NetworkState[] readRepStates(String fileName, int nPairs) {
+		NetworkState[] repStates = new NetworkState[100];//100 perturbations
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			for(int i=0;i<repStates.length;i++) {			
+				String str = br.readLine();			
+				StringTokenizer st = new StringTokenizer(str, ",");
+				
+				OnePairPhaseTransitions[] pairs = new OnePairPhaseTransitions[nPairs];				
+				for(int j=0;j<nPairs;j++) { // if no token exception, then written and read nPairs don't match!!!
+					PhaseLockMode mode = PhaseLockMode.instantiatePhaseLockMode(Integer.parseInt(st.nextToken()));	
+					pairs[j] = new OnePairPhaseTransitions(mode);
+				}				
+				repStates[i]=new NetworkState(pairs);
+				
+			}	
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return repStates;
+	}
 	private static void writeForLEVEL1_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
@@ -465,37 +501,38 @@ public class NetworkStatesWrapper {
 				75,				83,				84};*/
 		PertsToIgnore=GeneralUtils.arrayToListInteger(ignoreidcs);
 		
-		//int start_dur=1000;//Integer.parseInt(args[0]);
-	//	int dur_plus = 0;//Integer.parseInt(args[1]);
-		int mwlength = Integer.parseInt(args[0]);
+	
+	//	int mwlength = Integer.parseInt(args[0]);
 		
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-		String opFileL1 = csvfileDir+"_nsm_"+mwlength;
+	/*	String opFileL1 = csvfileDir+"_nsm_"+mwlength;
 		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
-		
+	*/	
 	
-		/*int duration = Integer.parseInt(args[0]);
-		int length = Integer.parseInt(args[1]);
-		NetworkState.RATE_THRESH = Double.parseDouble(args[2]);
+		int duration = 100;
+		int length = 10000;
+		NetworkState.RATE_THRESH = 5;
 		
 		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
-		String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+NetworkState.RATE_THRESH;
-		*/
+		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
+		//String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+NetworkState.RATE_THRESH;
+		
 		try {		
 			//moving window
-			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
+		/*	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
 			writeFor_MW1(new FileWriter(opFileL1), perturbs);
 			writeFor_MW2(new FileWriter(opFileL2), perturbs);
 			writeFor_MW3(new FileWriter(opFileL3), perturbs);
 			writeFor_MW4(new FileWriter(opFileL4), perturbs);
-			
+		*/	
 			//accum time
-		/*	Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
+			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
+			writeRepStates(new FileWriter(opFile_rep), perturbs);
 			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);
-			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs);
-			*/
+			//writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs);
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

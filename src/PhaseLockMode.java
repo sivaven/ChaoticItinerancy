@@ -22,4 +22,12 @@ public enum PhaseLockMode {
 		}
 		return UNSYNC;
 	}
+	
+	public static PhaseLockMode instantiatePhaseLockMode(int val) {
+		if(val==0) return PhaseLockMode.IN_phase;
+		if(val==1) return PhaseLockMode.OUT_1_phase;
+		if(val==2) return PhaseLockMode.OUT_2_phase;
+		if(val==9) return PhaseLockMode.UNSYNC;
+		return null;
+	}
 }

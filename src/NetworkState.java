@@ -41,6 +41,10 @@ public class NetworkState {
 		}
 	}
 	
+	public NetworkState(OnePairPhaseTransitions[] _pairs) {
+		this.pairs=_pairs;		
+	}
+	
 	private static double[][] populatePhDiffs(String fileName, int nPairs, int dur) {
 		double[][] phaseDiff = new double[nPairs][dur];
 		try {
@@ -158,6 +162,17 @@ public class NetworkState {
 			}
 		}
 		return match;
+	}
+	
+	public String getCsvString() {
+		String csvString = "";
+		for(int i=0;i<this.pairs.length;i++) {
+			csvString+= this.pairs[i].mode.getValue();
+			if(i!=this.pairs.length-1) {
+				csvString+=",";
+			}
+		}
+		return csvString;
 	}
 	
 	public int numberOfMatches(NetworkState state) {
