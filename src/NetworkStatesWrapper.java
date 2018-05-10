@@ -185,7 +185,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=0;dt<=20000;dt=dt+mwLength) {
+		for(int dt=0;dt<=5000;dt=dt+mwLength) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength);
 			
@@ -467,34 +467,35 @@ public class NetworkStatesWrapper {
 		
 		//int start_dur=1000;//Integer.parseInt(args[0]);
 	//	int dur_plus = 0;//Integer.parseInt(args[1]);
-		//int mwlength = Integer.parseInt(args[0]);
+		int mwlength = Integer.parseInt(args[0]);
 		
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
-	/*	String opFileL1 = csvfileDir+"_nsm_"+mwlength;
+		String opFileL1 = csvfileDir+"_nsm_"+mwlength;
 		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
-		*/
-		int duration = Integer.parseInt(args[0]);
+		
+	
+		/*int duration = Integer.parseInt(args[0]);
 		int length = Integer.parseInt(args[1]);
 		NetworkState.RATE_THRESH = Double.parseDouble(args[2]);
 		
 		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
 		String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+NetworkState.RATE_THRESH;
-		
+		*/
 		try {		
 			//moving window
-			//Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, mwlength);
-			/*writeFor_MW1(new FileWriter(opFileL1), perturbs);
+			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
+			writeFor_MW1(new FileWriter(opFileL1), perturbs);
 			writeFor_MW2(new FileWriter(opFileL2), perturbs);
 			writeFor_MW3(new FileWriter(opFileL3), perturbs);
-			writeFor_MW4(new FileWriter(opFileL4), perturbs);*/
+			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 			
 			//accum time
-			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
+		/*	Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
 			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);
 			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs);
-			
+			*/
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

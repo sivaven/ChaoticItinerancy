@@ -176,7 +176,8 @@ public class OnePairPhaseTransitions {
     				if(i==0 && j==5) continue;
     				if(i==5 && j==0) continue;
     				
-    				if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
+    				//if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
+    				if(stateCountNormed[j]>0.0001) {found = false;}
     			}
     			if(found==true) {
     				this.mode=PhaseLockMode.getPhaseLockMode(i);
