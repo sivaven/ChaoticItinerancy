@@ -229,6 +229,7 @@ public class NetworkStatesWrapper {
 		}	
 		
 			for(int i=0;i<nperturbs.length;i++) {
+				increments = 500;
 				boolean applyThresh = true;
 				int startpt = 0;				
 				for(int dt=increments;dt<=length;) {									
