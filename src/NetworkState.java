@@ -15,29 +15,30 @@ public class NetworkState {
 	OnePairPhaseTransitions[] pairs;
 	List<Integer> duplicates; // to hold a list of indices of duplicates of THIS state from wrapper classes
 	
-	public NetworkState(int nPairs, String csvfile, int dur) {
+	
+	public NetworkState(int nPairs, String csvfile, int dur, boolean applyThresh) {
 		this.pairs=new OnePairPhaseTransitions[nPairs];
 		double[][] phdiffs = populatePhDiffs(csvfile, nPairs, dur);
 		
 		for(int i=0;i<nPairs;i++) {
-			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH, applyThresh);
 		}
 	}
 	
-	public NetworkState(int nPairs, String csvfile) {
+	public NetworkState(int nPairs, String csvfile, boolean applyThresh) {
 		this.pairs=new OnePairPhaseTransitions[nPairs];
 		double[][] phdiffs = populatePhDiffs(csvfile, nPairs);
 		
 		for(int i=0;i<nPairs;i++) {
-			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH, applyThresh);
 		}
 	}
 	
-	public NetworkState(int nPairs, double[][] phdiffs) {
+	public NetworkState(int nPairs, double[][] phdiffs, boolean applyThresh) {
 		this.pairs=new OnePairPhaseTransitions[nPairs];
 		
 		for(int i=0;i<nPairs;i++) {
-			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH);
+			this.pairs[i]= new OnePairPhaseTransitions(phdiffs[i], RATE_THRESH, applyThresh);
 		}
 	}
 	
@@ -189,7 +190,7 @@ public class NetworkState {
 		int dur = 9000;
 		String csvfile = "C:\\Users\\sivav\\Dropbox\\HCO\\Periods\\E4\\External_Causal_v0\\spk_PSTUT_4.csv";
 		
-		NetworkState ns = new NetworkState(nPairs, csvfile, dur);
+		NetworkState ns = new NetworkState(nPairs, csvfile, dur, true);
 		ns.displayNetworkState(false, false);
 		System.out.println("\n"+ns.numberOfUnSyncModes());
 		//100 - 32 (9's)

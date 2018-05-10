@@ -32,7 +32,7 @@ public class OnePairPhaseTransitions {
 		populateStateCounts();
 		populatePhaseLockMode(thresholdMin, thresholdMax);
 	}
-	public OnePairPhaseTransitions(double[] phase_diff, double rateThresh) {
+	public OnePairPhaseTransitions(double[] phase_diff, double rateThresh, boolean applyThresh) {
 		phaseDiff = phase_diff;
 		timePointEnd=phase_diff.length;
 		
@@ -40,8 +40,9 @@ public class OnePairPhaseTransitions {
 		//populateTransitionMatrix();
 		//populateTransitionRateMatrix();
 		populateStateCounts();
-		populatePhaseLockMode(rateThresh);
+		populatePhaseLockMode(rateThresh, applyThresh);
 	}
+	
 	public OnePairPhaseTransitions(PhaseLockMode _mode) {
 		this.mode=_mode;
 	}
@@ -164,7 +165,7 @@ public class OnePairPhaseTransitions {
     	}
     }
 
-    private void populatePhaseLockMode(double thresh) {
+    private void populatePhaseLockMode(double thresh, boolean applyThresh) {
     	this.mode=PhaseLockMode.UNSYNC;
     	boolean found = false;
     	for(int i=0;i<this.stateCountNormed.length;i++) {
@@ -179,8 +180,11 @@ public class OnePairPhaseTransitions {
     				if(i==0 && j==5) continue;
     				if(i==5 && j==0) continue;
     				
-    				//if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
-    				if(stateCountNormed[j]>0.0001) {found = false;}
+    				if(applyThresh) {
+    					if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
+    				}else {    				
+    					if(stateCountNormed[j]>0.0001) {found = false;}
+    				}
     			}
     			if(found==true) {
     				this.mode=PhaseLockMode.getPhaseLockMode(i);

@@ -17,7 +17,7 @@ public class NetworkStatesWrapper {
 	public int nPairs; // n digits in each state
 	public int duration; // duration using which the state is identified; affects the validModes
 	
-	public NetworkStatesWrapper(String dirOfCSVFiles, int npairs, int dur) {
+	/*public NetworkStatesWrapper(String dirOfCSVFiles, int npairs, int dur) {
 		File f = new File(dirOfCSVFiles);
 		File[] files = f.listFiles();
 		
@@ -31,7 +31,7 @@ public class NetworkStatesWrapper {
 			states[i]=new NetworkState(nPairs, csvFile, duration);
 			validModes[i]= nPairs - states[i].numberOfUnSyncModes();
 		}
-	}
+	}*/
 	public NetworkStatesWrapper(String dirOfCSVFiles, int npairs) {
 		File f = new File(dirOfCSVFiles);
 		if(!f.exists() || !f.isDirectory()) {
@@ -48,7 +48,7 @@ public class NetworkStatesWrapper {
 		}
 	}
 	
-	public NetworkState[] constructNetworkStates(int duration) { 
+	public NetworkState[] constructNetworkStates(int duration, boolean applyThresh) { 
 		NetworkState[] states = new NetworkState[phdifs.length];	
 		
 		for(int i=0;i<phdifs.length;i++) {			
@@ -60,12 +60,12 @@ public class NetworkStatesWrapper {
 				}
 			}
 			
-			states[i] = new NetworkState(nPairs,phdiffsTrimmed);
+			states[i] = new NetworkState(nPairs,phdiffsTrimmed, applyThresh);
 		}		
 		return states;
 	}
 	
-	public NetworkState[] constructNetworkStates(int startpt, int duration) { 
+	public NetworkState[] constructNetworkStates(int startpt, int duration, boolean applyThresh) { 
 		NetworkState[] states = new NetworkState[phdifs.length];	
 		
 		for(int i=0;i<phdifs.length;i++) {			
@@ -77,9 +77,22 @@ public class NetworkStatesWrapper {
 				}
 			}
 			
-			states[i] = new NetworkState(nPairs,phdiffsTrimmed);
+			states[i] = new NetworkState(nPairs,phdiffsTrimmed, applyThresh);
 		}		
 		return states;
+	}
+	public NetworkState constructNetworkState(int pertubid, int startpt, int duration, boolean applyThresh) { 
+		NetworkState state = null;		
+			
+		double[][] phdiffsTrimmed = new double[nPairs][duration];		
+		for(int j=0;j<nPairs;j++) {
+			for(int k=startpt;k<startpt+duration;k++) {
+				phdiffsTrimmed[j][k-startpt] = phdifs[pertubid][j][k];
+			}
+		}			
+		state = new NetworkState(nPairs,phdiffsTrimmed, applyThresh);
+			
+		return state;
 	}
 	public int[] calculateSinglePhaseLockedModes(NetworkState[] states) {
 		int[] nSinglePhaseLockedModes = new int[states.length];
@@ -126,7 +139,7 @@ public class NetworkStatesWrapper {
 			fw.flush();			
 	}
 	
-	private static void forInfoDecay1() {
+	/*private static void forInfoDecay1() {
 		int nPairs =99; // number of unique pairs = number of digits
 		int[] durs = {1000, 1500, 2000, 2500, 
 						3000, 3500, 4000, 4500, 5000, 
@@ -149,8 +162,8 @@ public class NetworkStatesWrapper {
 			System.out.println();
 			previous_wrapper = wrapper;
 		}		
-	}
-	private static Perturbation[] forInfoDecayAccum(String ipFileDir, int increments, int length) {
+	}*/
+	private static Perturbation[] forInfoDecayAccum(String ipFileDir, int increments, int length, boolean applyThresh) {
 		int nPairs =99; // number of unique pairs = number of digits
 		
 		System.out.println("Reading data...");
@@ -164,7 +177,7 @@ public class NetworkStatesWrapper {
 			
 		for(int dt=increments;dt<=length;dt=dt+increments) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(0, dt);
+			NetworkState[] _states = wrapper.constructNetworkStates(0, dt, applyThresh);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt, _states[i]);
@@ -175,7 +188,7 @@ public class NetworkStatesWrapper {
 		return nperturbs;
 	}
 	
-	private static Perturbation[] forInfoDecay2(String ipFileDir, int mwLength) {
+	private static Perturbation[] forInfoDecay2(String ipFileDir, int mwLength, boolean applyThresh) {
 		int nPairs =99; // number of unique pairs = number of digits
 		
 		System.out.println("Reading data...");
@@ -189,7 +202,7 @@ public class NetworkStatesWrapper {
 			
 		for(int dt=0;dt<=15000;dt=dt+mwLength) {
 			System.out.println(dt + "completed: ");
-			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength);
+			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength, applyThresh);
 			
 			for(int i=0;i<nperturbs.length;i++) {					
 				nperturbs[i].addData(dt+mwLength, _states[i]);
@@ -199,7 +212,42 @@ public class NetworkStatesWrapper {
 		
 		return nperturbs;
 	}
+	/*
+	 * threshold application dynamic! different perturbations should get threshold applied at different durations
+	 */
 	
+	private static Perturbation[] forInfoDecayAccum2(String ipFileDir, int increments, int length, int[] durOfRep) {
+		int nPairs =99; // number of unique pairs = number of digits
+		
+		System.out.println("Reading data...");
+		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
+		System.out.println("Reading complete...");
+		
+		Perturbation[] nperturbs = new Perturbation[wrapper.phdifs.length];
+		for(int i=0;i<nperturbs.length;i++) {
+			nperturbs[i] = new Perturbation();
+		}		
+			
+		for(int dt=increments;dt<=length;dt=dt+increments) {
+			System.out.println(dt + "completed: ");			
+			
+			//NetworkState[] _states = wrapper.constructNetworkStates(0, dt, applyThresh);
+			boolean applyThresh = true;
+			int startpt = 0; //either 0 or duration of max.
+			for(int i=0;i<nperturbs.length;i++) {
+				if(dt>durOfRep[i]) {
+					applyThresh = false;
+					startpt=durOfRep[i];
+				}				
+				NetworkState state = wrapper.constructNetworkState(i, startpt, increments, applyThresh);
+				nperturbs[i].addData(dt,state);
+			}
+			//_states= null;
+		}				
+		
+		return nperturbs;
+	}
+	/*
 	private static void singleDurStates() {
 		int nPairs =99; // number of unique pairs = number of bits
 		int dur = 2500;
@@ -210,26 +258,29 @@ public class NetworkStatesWrapper {
 		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(csvfileDir, nPairs, dur);
 		//wrapper.displayValidModes();
 		//System.out.println();
-		/*for(int i=0;i<wrapper.states.length;i++) {
+		for(int i=0;i<wrapper.states.length;i++) {
 			System.out.print(wrapper.validModes[i]+"\t");
 			wrapper.states[i].displayNetworkState(false, false);
 			
 			System.out.println();
-		}*/
+		}
 	}
-	
-	private static void writeRepStates(FileWriter fw,  Perturbation[] perturbs) {
+	*/
+	private static void writeRepStates(FileWriter fw_rep,  FileWriter fw_rep_dur, Perturbation[] perturbs) {
 		try {
 			for(int i=0;i<perturbs.length;i++) {
 				int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
 				NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
-				fw.write(repState.getCsvString()+"\n");
+				fw_rep.write(repState.getCsvString()+"\n");
+				fw_rep_dur.write(""+dur_of_max_sync+"\n");
 			}
-			fw.close();	
+			fw_rep.close();	
+			fw_rep_dur.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
 	private static NetworkState[] readRepStates(String fileName, int nPairs) {
 		NetworkState[] repStates = new NetworkState[100];//100 perturbations
 		try {
@@ -251,6 +302,21 @@ public class NetworkStatesWrapper {
 			e.printStackTrace();
 		}
 		return repStates;
+	}
+	
+	private static int[] readRepStatesDur(String fileName) {
+		int[] repStatesDur = new int[100];//100 perturbations
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			for(int i=0;i<repStatesDur.length;i++) {			
+				String str = br.readLine();						
+				repStatesDur[i]=Integer.parseInt(str);				
+			}	
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return repStatesDur;
 	}
 	private static void writeForLEVEL1_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
 		boolean headernotwritten=true;
@@ -495,6 +561,7 @@ public class NetworkStatesWrapper {
 		}
 		fw.close();	
 	}
+	
 	public static void main(String[] args) {
 		int[] ignoreidcs = {};/* {79,93,94,				26,				65,				0,				3,				4,				7,
 				9,				13,				36,				41,				46,				64,				68,				72,
@@ -512,12 +579,13 @@ public class NetworkStatesWrapper {
 	*/	
 		
 		
-		//int duration = 500;
-		//int length = 15000;
+		int duration = 500;
+		int length = 15000;
 		NetworkState.RATE_THRESH = 2;
-		
+		boolean applyThresh = true;
 	//	String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
+		String opFile_rep_dur = csvfileDir+"_rep_dur_"+NetworkState.RATE_THRESH;
 	//	String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
 		String opFile_mw = csvfileDir+"_nsm_mw_l2";
 		
@@ -530,17 +598,17 @@ public class NetworkStatesWrapper {
 			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 		*/	
 			//accum time - all
-			//Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
-			//writeRepStates(new FileWriter(opFile_rep), perturbs);
+			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length, true);
+			writeRepStates(new FileWriter(opFile_rep), new FileWriter(opFile_rep_dur), perturbs);
 			
 			//writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
 			//NetworkState[] repStates = readRepStates(opFile_rep, 99);
 			//writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs, repStates);
 			
 			//hybrid
-			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
-			NetworkState[] repStates = readRepStates(opFile_rep, 99);
-			writeForLEVEL2_Figure(new FileWriter(opFile_mw), perturbs, repStates);
+		//	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength, applyThresh);
+		//	NetworkState[] repStates = readRepStates(opFile_rep, 99);
+		//	writeForLEVEL2_Figure(new FileWriter(opFile_mw), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
