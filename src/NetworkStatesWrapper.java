@@ -398,7 +398,7 @@ public class NetworkStatesWrapper {
 			Set<Integer> durations = perturbs[i].getAllDurations();			
 			
 				boolean first = true;
-				fw1.write(durations.size());
+				fw1.write(""+durations.size());
 				for(int dur:durations) {
 					fw1.write("\t");
 					fw1.write(""+dur);
