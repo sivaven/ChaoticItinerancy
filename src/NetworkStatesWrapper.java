@@ -614,7 +614,7 @@ public class NetworkStatesWrapper {
 			//accum time - dynamic
 			NetworkState[] repStates = readRepStates(opFile_rep, 99);
 			int[] repdurs = readRepStatesDur(opFile_rep_dur);
-			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 10000, repdurs);
+			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 8000, repdurs);
 			writeForLEVEL2_Figure(new FileWriter(opFile_accum_dynamic), perturbs, repStates);
 			
 		}catch(Exception e) {
