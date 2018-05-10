@@ -579,16 +579,16 @@ public class NetworkStatesWrapper {
 	*/	
 		
 		
-		int duration = 500;
-		int length = 15000;
+		//int duration = 500;
+		//int length = 15000;
 		NetworkState.RATE_THRESH = 2;
-		boolean applyThresh = true;
+	//	boolean applyThresh = true;
 	//	String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
 		String opFile_rep_dur = csvfileDir+"_rep_dur_"+NetworkState.RATE_THRESH;
 	//	String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
 		String opFile_mw = csvfileDir+"_nsm_mw_l2";
-		
+		String opFile_accum_dynamic = csvfileDir+"_nsm_match_acc_dynamic_";
 		try {		
 			//moving window - all
 		/*	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
@@ -598,8 +598,8 @@ public class NetworkStatesWrapper {
 			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 		*/	
 			//accum time - all
-			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length, true);
-			writeRepStates(new FileWriter(opFile_rep), new FileWriter(opFile_rep_dur), perturbs);
+		//	Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length, true);
+		//	writeRepStates(new FileWriter(opFile_rep), new FileWriter(opFile_rep_dur), perturbs);
 			
 			//writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
 			//NetworkState[] repStates = readRepStates(opFile_rep, 99);
@@ -609,6 +609,12 @@ public class NetworkStatesWrapper {
 		//	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength, applyThresh);
 		//	NetworkState[] repStates = readRepStates(opFile_rep, 99);
 		//	writeForLEVEL2_Figure(new FileWriter(opFile_mw), perturbs, repStates);
+			
+			//accum time - dynamic
+			NetworkState[] repStates = readRepStates(opFile_rep, 99);
+			int[] repdurs = readRepStatesDur(opFile_rep_dur);
+			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 100, 7500, repdurs);
+			writeForLEVEL2_Figure(new FileWriter(opFile_accum_dynamic), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
