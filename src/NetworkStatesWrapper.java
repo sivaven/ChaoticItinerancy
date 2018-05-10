@@ -398,8 +398,9 @@ public class NetworkStatesWrapper {
 			Set<Integer> durations = perturbs[i].getAllDurations();			
 			
 				boolean first = true;
+				fw1.write(durations.size());
 				for(int dur:durations) {
-					if(!first) fw1.write("\t");
+					fw1.write("\t");
 					fw1.write(""+dur);
 					
 					int decay = perturbs[i].numberOfMatchingModes(dur, repStates[i]);
