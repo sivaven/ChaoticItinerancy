@@ -512,7 +512,7 @@ public class NetworkStatesWrapper {
 	*/	
 	
 		int duration = 100;
-		int length = 10000;
+		int length = 7500;
 		NetworkState.RATE_THRESH = 5;
 		
 		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
