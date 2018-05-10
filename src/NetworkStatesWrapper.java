@@ -226,24 +226,25 @@ public class NetworkStatesWrapper {
 		Perturbation[] nperturbs = new Perturbation[wrapper.phdifs.length];
 		for(int i=0;i<nperturbs.length;i++) {
 			nperturbs[i] = new Perturbation();
-		}		
-			
-		for(int dt=increments;dt<=length;dt=dt+increments) {
-			System.out.println(dt + "completed: ");			
-			
-			//NetworkState[] _states = wrapper.constructNetworkStates(0, dt, applyThresh);
-			boolean applyThresh = true;
-			int startpt = 0; //either 0 or duration of max.
+		}	
+		
 			for(int i=0;i<nperturbs.length;i++) {
-				if(dt>durOfRep[i]) {
-					applyThresh = false;
-					startpt=durOfRep[i];
-				}				
-				NetworkState state = wrapper.constructNetworkState(i, startpt, increments, applyThresh);
-				nperturbs[i].addData(dt,state);
+				boolean applyThresh = true;
+				int startpt = 0;				
+				for(int dt=increments;dt<=length;) {									
+					NetworkState state = wrapper.constructNetworkState(i, startpt, dt-startpt, applyThresh);// 0 to 500, 500 to 600, 
+					nperturbs[i].addData(dt,state);// 500, 
+					if(dt>=durOfRep[i]) {
+						increments = 100;
+						applyThresh = false;
+						startpt=durOfRep[i];
+					}
+					dt=dt+increments;
+				}
+				
 			}
 			//_states= null;
-		}				
+						
 		
 		return nperturbs;
 	}
@@ -588,7 +589,7 @@ public class NetworkStatesWrapper {
 		String opFile_rep_dur = csvfileDir+"_rep_dur_"+NetworkState.RATE_THRESH;
 	//	String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
 		String opFile_mw = csvfileDir+"_nsm_mw_l2";
-		String opFile_accum_dynamic = csvfileDir+"_nsm_match_acc_dynamic_";
+		String opFile_accum_dynamic = csvfileDir+"_nsm_acc_l2_dynamic";
 		try {		
 			//moving window - all
 		/*	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
@@ -613,7 +614,7 @@ public class NetworkStatesWrapper {
 			//accum time - dynamic
 			NetworkState[] repStates = readRepStates(opFile_rep, 99);
 			int[] repdurs = readRepStatesDur(opFile_rep_dur);
-			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 100, 7500, repdurs);
+			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 10000, repdurs);
 			writeForLEVEL2_Figure(new FileWriter(opFile_accum_dynamic), perturbs, repStates);
 			
 		}catch(Exception e) {
