@@ -511,13 +511,13 @@ public class NetworkStatesWrapper {
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
 	*/	
 	
-		int duration = 100;
-		int length = 7500;
-		NetworkState.RATE_THRESH = 5;
+		int duration = 500;
+		int length = 1500;
+		NetworkState.RATE_THRESH = 2;
 		
-		//String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
+		String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
-		String opFile_accum_2 = csvfileDir+"_nsm_match_rep_acc_"+NetworkState.RATE_THRESH;
+		String opFile_accum_2 = csvfileDir+"_nsm_acc_l2"+NetworkState.RATE_THRESH;
 		
 		try {		
 			//moving window
@@ -529,9 +529,9 @@ public class NetworkStatesWrapper {
 		*/	
 			//accum time
 			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
-			//writeRepStates(new FileWriter(opFile_rep), perturbs);
+			writeRepStates(new FileWriter(opFile_rep), perturbs);
 			
-			//writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
+			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
 			NetworkState[] repStates = readRepStates(opFile_rep, 99);
 			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs, repStates);
 			
