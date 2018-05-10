@@ -187,7 +187,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=0;dt<=5000;dt=dt+mwLength) {
+		for(int dt=0;dt<=15000;dt=dt+mwLength) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength);
 			
@@ -502,7 +502,7 @@ public class NetworkStatesWrapper {
 		PertsToIgnore=GeneralUtils.arrayToListInteger(ignoreidcs);
 		
 	
-	//	int mwlength = Integer.parseInt(args[0]);
+		int mwlength = 100;//Integer.parseInt(args[0]);
 		
 		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
 	/*	String opFileL1 = csvfileDir+"_nsm_"+mwlength;
@@ -510,30 +510,37 @@ public class NetworkStatesWrapper {
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
 		String opFileL4 = csvfileDir+"_nsm_matchrep_"+mwlength;
 	*/	
-	
-		int duration = 500;
-		int length = 15000;
-		NetworkState.RATE_THRESH = 2;
 		
-		String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
+		
+		//int duration = 500;
+		//int length = 15000;
+		//NetworkState.RATE_THRESH = 2;
+		
+	//	String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
-		String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
+	//	String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
+		String opFile_mw = csvfileDir+"_nsm_mw_l2";
 		
 		try {		
-			//moving window
+			//moving window - all
 		/*	Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
 			writeFor_MW1(new FileWriter(opFileL1), perturbs);
 			writeFor_MW2(new FileWriter(opFileL2), perturbs);
 			writeFor_MW3(new FileWriter(opFileL3), perturbs);
 			writeFor_MW4(new FileWriter(opFileL4), perturbs);
 		*/	
-			//accum time
-			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
-			writeRepStates(new FileWriter(opFile_rep), perturbs);
+			//accum time - all
+			//Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
+			//writeRepStates(new FileWriter(opFile_rep), perturbs);
 			
-			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
+			//writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
+			//NetworkState[] repStates = readRepStates(opFile_rep, 99);
+			//writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs, repStates);
+			
+			//hybrid
+			Perturbation[] perturbs = forInfoDecay2(csvfileDir, mwlength);
 			NetworkState[] repStates = readRepStates(opFile_rep, 99);
-			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs, repStates);
+			writeForLEVEL2_Figure(new FileWriter(opFile_mw), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
