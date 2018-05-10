@@ -512,12 +512,12 @@ public class NetworkStatesWrapper {
 	*/	
 	
 		int duration = 500;
-		int length = 1500;
+		int length = 15000;
 		NetworkState.RATE_THRESH = 2;
 		
 		String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
-		String opFile_accum_2 = csvfileDir+"_nsm_acc_l2"+NetworkState.RATE_THRESH;
+		String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
 		
 		try {		
 			//moving window
