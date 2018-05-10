@@ -390,6 +390,28 @@ public class NetworkStatesWrapper {
 		fw.close();
 	}
 	
+	private static void writeForLEVEL2_Figure_Dynamic(FileWriter fw1, FileWriter fw2, Perturbation[] perturbs, NetworkState[] repStates) throws IOException { //number of single phase locked mode
+		for(int i=0;i<perturbs.length;i++) {
+			System.out.println("perturbation.."+(i+1));
+			
+			Set<Integer> durations = perturbs[i].getAllDurations();			
+			
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw1.write("\t");
+					fw1.write(""+dur);
+					
+					int decay = perturbs[i].numberOfMatchingModes(dur, repStates[i]);
+					if(!first) fw2.write("\t");
+					fw2.write(""+decay);					
+					first = false;
+				}
+				fw1.write("\n");
+				fw2.write("\n");		
+		}
+		fw1.close();
+		fw2.close();
+	}
 	/*
 	 * moving window : total number of sync modes
 	 */
@@ -615,7 +637,7 @@ public class NetworkStatesWrapper {
 			NetworkState[] repStates = readRepStates(opFile_rep, 99);
 			int[] repdurs = readRepStatesDur(opFile_rep_dur);
 			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 8000, repdurs);
-			writeForLEVEL2_Figure(new FileWriter(opFile_accum_dynamic), perturbs, repStates);
+			writeForLEVEL2_Figure_Dynamic(new FileWriter(opFile_accum_dynamic+"_x"), new FileWriter(opFile_accum_dynamic+"_y"), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
