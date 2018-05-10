@@ -231,14 +231,17 @@ public class NetworkStatesWrapper {
 			for(int i=0;i<nperturbs.length;i++) {
 				increments = 500;
 				boolean applyThresh = true;
-				int startpt = 0;				
+				int startpt = 0;	
+				boolean addData = false;
 				for(int dt=increments;dt<=length;) {									
 					NetworkState state = wrapper.constructNetworkState(i, startpt, dt-startpt, applyThresh);// 0 to 500, 500 to 600, 
-					nperturbs[i].addData(dt,state);// 500, 
+					if(addData)
+						nperturbs[i].addData(dt,state);// 500, 
 					if(dt>=durOfRep[i]) {
 						increments = 100;
 						applyThresh = false;
 						startpt=durOfRep[i];
+						addData = true;
 					}
 					dt=dt+increments;
 				}
