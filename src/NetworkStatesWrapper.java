@@ -289,12 +289,12 @@ public class NetworkStatesWrapper {
 		
 	}
 	
-	private static void writeForLEVEL2_Figure(FileWriter fw, Perturbation[] perturbs) throws IOException { //number of single phase locked mode
+	private static void writeForLEVEL2_Figure(FileWriter fw, Perturbation[] perturbs, NetworkState[] repStates) throws IOException { //number of single phase locked mode
 		boolean headernotwritten=true;
 		for(int i=0;i<perturbs.length;i++) {
 			System.out.println("perturbation.."+(i+1));
-			int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
-			NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
+			//int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
+			//NetworkState repState = perturbs[i].getNetworkState(dur_of_max_sync);
 			
 			//if(repState.pairs.length  - repState.numberOfUnSyncModes() <80) continue;
 			
@@ -312,7 +312,7 @@ public class NetworkStatesWrapper {
 			boolean first = true;
 			
 			for(int dur:durations) {					
-				int decay = perturbs[i].numberOfMatchingModes(dur, repState);
+				int decay = perturbs[i].numberOfMatchingModes(dur, repStates[i]);
 				if(!first) fw.write("\t");
 				fw.write(""+decay);
 				first = false;
@@ -515,9 +515,9 @@ public class NetworkStatesWrapper {
 		int length = 7500;
 		NetworkState.RATE_THRESH = 5;
 		
-		String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
+		//String opFile_accum_1 = csvfileDir+"_nsm_acc1_"+NetworkState.RATE_THRESH;
 		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
-		//String opFile_accum_2 = csvfileDir+"_nsm_acc2_"+NetworkState.RATE_THRESH;
+		String opFile_accum_2 = csvfileDir+"_nsm_match_rep_acc_"+NetworkState.RATE_THRESH;
 		
 		try {		
 			//moving window
@@ -529,9 +529,11 @@ public class NetworkStatesWrapper {
 		*/	
 			//accum time
 			Perturbation[] perturbs = forInfoDecayAccum(csvfileDir, duration, length);
-			writeRepStates(new FileWriter(opFile_rep), perturbs);
-			writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);
-			//writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs);
+			//writeRepStates(new FileWriter(opFile_rep), perturbs);
+			
+			//writeForLEVEL1_Figure(new FileWriter(opFile_accum_1), perturbs);			
+			NetworkState[] repStates = readRepStates(opFile_rep, 99);
+			writeForLEVEL2_Figure(new FileWriter(opFile_accum_2), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
