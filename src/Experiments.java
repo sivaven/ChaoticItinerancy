@@ -66,8 +66,8 @@ public class Experiments {
 	public static void main(String[] args) {
 		int startpt = 0;
 		int endpt = 15000;
-		int mwlength = 50;
-		boolean applyThresh = false;	
+		int mwlength = 100;
+		boolean applyThresh = true;	
 		
 		NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
 		

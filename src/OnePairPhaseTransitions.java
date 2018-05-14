@@ -21,7 +21,7 @@ public class OnePairPhaseTransitions {
 	long[] stateCount;
 	double[] stateCountNormed;
 	public PhaseLockMode mode; 
-	
+	/*
 	public OnePairPhaseTransitions(double[] phase_diff, double thresholdMin, double thresholdMax) {
 		phaseDiff = phase_diff;
 		timePointEnd=phase_diff.length;
@@ -31,7 +31,7 @@ public class OnePairPhaseTransitions {
 		//populateTransitionRateMatrix();
 		populateStateCounts();
 		populatePhaseLockMode(thresholdMin, thresholdMax);
-	}
+	}*/
 	public OnePairPhaseTransitions(double[] phase_diff, double rateThresh, boolean applyThresh) {
 		phaseDiff = phase_diff;
 		timePointEnd=phase_diff.length;
@@ -139,7 +139,7 @@ public class OnePairPhaseTransitions {
 			}		
 		return sum;
 	}
-	
+	/*
     private void populatePhaseLockMode(double threshold_min, double threshold_max) {
     	this.mode=PhaseLockMode.UNSYNC;
     	boolean found = false;
@@ -164,15 +164,16 @@ public class OnePairPhaseTransitions {
     		}
     	}
     }
-
+*/
     private void populatePhaseLockMode(double thresh, boolean applyThresh) {
     	this.mode=PhaseLockMode.UNSYNC;
     	boolean found = false;
-    	for(int i=0;i<this.stateCountNormed.length;i++) {
+    	for(int i=0;i<stateCountNormed.length;i++) {
     		
     	//	if(stateCountNormed[i]>threshold_max) 
     			found = true;
-    			for(int j=0;j<this.stateCountNormed.length;j++) {    				
+    			double sum = 0;
+    			for(int j=0;j<stateCountNormed.length;j++) {    				
     				if(i==j) continue;
     				//min threshold crit. is not applied to the adjacent transient partitions 
     				//(cuz some of them are not transient, a fixed boundary partition doesnt capture this)
@@ -180,12 +181,15 @@ public class OnePairPhaseTransitions {
     				if(i==0 && j==5) continue;
     				if(i==5 && j==0) continue;
     				
-    				if(applyThresh) {
-    					if(stateCountNormed[j]>=stateCountNormed[i]/thresh) {found = false;}
-    				}else {    				
-    					if(stateCountNormed[j]>0.0001) {found = false;}
-    				}
+    				sum+=stateCountNormed[j];
     			}
+    			
+    			if(applyThresh) {
+					if(sum*thresh > stateCountNormed[i]) {found = false;}
+				}else {    				
+					if(sum > 0.0001) {found = false;}
+				}
+    			
     			if(found==true) {
     				this.mode=PhaseLockMode.getPhaseLockMode(i);
     				break;
