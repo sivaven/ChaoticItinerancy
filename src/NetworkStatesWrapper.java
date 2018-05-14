@@ -188,9 +188,7 @@ public class NetworkStatesWrapper {
 		return nperturbs;
 	}
 	
-	private static Perturbation[] forInfoDecay2(String ipFileDir, int mwLength, boolean applyThresh) {
-		int nPairs =99; // number of unique pairs = number of digits
-		
+	public static Perturbation[] ConstructPerturbations(String ipFileDir, int nPairs, int startPt, int endPt, int mwLength, boolean applyThresh) {				
 		System.out.println("Reading data...");
 		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
 		System.out.println("Reading complete...");
@@ -200,7 +198,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=0;dt<=15000;dt=dt+mwLength) {
+		for(int dt=startPt;dt<=endPt;dt=dt+mwLength) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(dt, mwLength, applyThresh);
 			
@@ -286,8 +284,8 @@ public class NetworkStatesWrapper {
 		}
 	}
 
-	private static NetworkState[] readRepStates(String fileName, int nPairs) {
-		NetworkState[] repStates = new NetworkState[100];//100 perturbations
+	public static NetworkState[] readRepStates(String fileName, int nperturbs, int nPairs) {
+		NetworkState[] repStates = new NetworkState[nperturbs];//100 perturbations
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
 			for(int i=0;i<repStates.length;i++) {			
@@ -309,7 +307,7 @@ public class NetworkStatesWrapper {
 		return repStates;
 	}
 	
-	private static int[] readRepStatesDur(String fileName) {
+	public static int[] readRepStatesDur(String fileName) {
 		int[] repStatesDur = new int[100];//100 perturbations
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -599,7 +597,8 @@ public class NetworkStatesWrapper {
 	
 		int mwlength = 100;//Integer.parseInt(args[0]);
 		
-		String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
+		//String csvfileDir = "/home/siyappan/NeuroProjects/Periods/E4/External_Causal_Exp1";
+		String csvfileDir = "C:\\Users\\sivav\\Google Drive\\NeuroProjects\\Periods\\E4\\External_Causal_Exp1_rep_2.0_test";
 	/*	String opFileL1 = csvfileDir+"_nsm_"+mwlength;
 		String opFileL2 = csvfileDir+"_nsm_matchlast_"+mwlength;
 		String opFileL3 = csvfileDir+"_nsm_matchfirst_"+mwlength;
@@ -612,7 +611,7 @@ public class NetworkStatesWrapper {
 		NetworkState.RATE_THRESH = 2;
 	//	boolean applyThresh = true;
 	//	String opFile_accum_1 = csvfileDir+"_nsm_acc_l1_"+NetworkState.RATE_THRESH;
-		String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
+		//String opFile_rep = csvfileDir+"_rep_"+NetworkState.RATE_THRESH;
 		String opFile_rep_dur = csvfileDir+"_rep_dur_"+NetworkState.RATE_THRESH;
 	//	String opFile_accum_2 = csvfileDir+"_nsm_acc_l2_"+NetworkState.RATE_THRESH;
 		String opFile_mw = csvfileDir+"_nsm_mw_l2";
@@ -639,10 +638,12 @@ public class NetworkStatesWrapper {
 		//	writeForLEVEL2_Figure(new FileWriter(opFile_mw), perturbs, repStates);
 			
 			//accum time - dynamic
-			NetworkState[] repStates = readRepStates(opFile_rep, 99);
-			int[] repdurs = readRepStatesDur(opFile_rep_dur);
-			Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 8000, repdurs);
-			writeForLEVEL2_Figure_Dynamic(new FileWriter(opFile_accum_dynamic+"_x"), new FileWriter(opFile_accum_dynamic+"_y"), perturbs, repStates);
+			NetworkState[] repStates = readRepStates(csvfileDir, 82, 99);
+			Entropy ent = new Entropy(repStates);
+			ent.displayStats(false);
+			//int[] repdurs = readRepStatesDur(opFile_rep_dur);
+			//Perturbation[] perturbs = forInfoDecayAccum2(csvfileDir, 500, 8000, repdurs);
+			//writeForLEVEL2_Figure_Dynamic(new FileWriter(opFile_accum_dynamic+"_x"), new FileWriter(opFile_accum_dynamic+"_y"), perturbs, repStates);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
