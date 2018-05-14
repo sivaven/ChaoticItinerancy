@@ -156,8 +156,15 @@ public class Experiments {
 		fw.close();	
 	}
 	
+	/*
+	 * Compare moving window with previous window
+	 */
+	public void plot_b() throws IOException {
+		
+	}
+	
 	public static void main(String[] args) {
-		boolean isMovingWindow = false;
+		boolean isMovingWindow = true;
 		
 		int startpt = 0;
 		int endpt = 15000;
@@ -174,9 +181,9 @@ public class Experiments {
 			exps = new Experiments(endpt, increments, applyThresh);		
 		
 		try {
-			exps.plot_0();			//baseline - save rep and plot: number of SYNC MODES vs. Duration
+			//exps.plot_0();			//baseline - save rep and plot: number of SYNC MODES vs. Duration
 			NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
-			exps.plot_0(repStates);			//plot number of matching (to rep state) sync modes vs Duration
+			//exps.plot_0(repStates);			//plot number of matching (to rep state) sync modes vs Duration
 			
 			/*
 			 * moving window experiments below
