@@ -168,7 +168,7 @@ public class Experiments {
 		
 		int startpt = 0;
 		int endpt = 15000;
-		int mwlength = 100;
+		int mwlength = 500;
 		int increments = 500;
 		
 		boolean applyThresh = true;		
