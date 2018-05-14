@@ -19,7 +19,7 @@ public class Experiments {
 	 *  construct moving window using wrapper
 	 */
 	public Experiments(int mw_startPt, int mw_endPt, int mw_length, boolean applyThresh){
-		int mwLength = mw_length;
+		mwLength = mw_length;
 		System.out.println("Constructing Perturbation objects...");
 		perturbations = NetworkStatesWrapper.ConstructPerturbations(SIM_DAT_FILES_DIR, N_PAIRS, mw_startPt, mw_endPt, mwLength, applyThresh);
 	}
@@ -66,7 +66,7 @@ public class Experiments {
 	public static void main(String[] args) {
 		int startpt = 0;
 		int endpt = 15000;
-		int mwlength = 100;
+		int mwlength = 50;
 		boolean applyThresh = false;	
 		
 		NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
