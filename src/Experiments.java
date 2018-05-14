@@ -160,15 +160,53 @@ public class Experiments {
 	 * Compare moving window with previous window
 	 */
 	public void plot_b() throws IOException {
+		String opFile=DIR+"plot_b/mw_"+mwLength;
+		FileWriter fw = new FileWriter(opFile);
 		
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbations.length;i++) {			
+			System.out.println("perturbation.."+(i+1));
+			
+			Set<Integer> durations = perturbations[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			
+			NetworkState previousState = null;
+			for(int dur:durations) {					
+				int countofmatch = 0;
+				if(!first) {
+					countofmatch = perturbations[i].getNetworkState(dur).numberOfMatches(previousState);
+				}
+				if(!first) fw.write("\t");
+				fw.write(""+countofmatch);
+				first = false;
+				
+				previousState = perturbations[i].getNetworkState(dur);
+			}
+			
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();	
 	}
 	
 	public static void main(String[] args) {
 		boolean isMovingWindow = true;
+		int mwlength = 100;
 		
 		int startpt = 0;
-		int endpt = 15000;
-		int mwlength = 500;
+		int endpt = 15000;		
 		int increments = 500;
 		
 		boolean applyThresh = true;		
@@ -188,8 +226,8 @@ public class Experiments {
 			/*
 			 * moving window experiments below
 			 */
-			exps.plot_a(repStates);  // plot number of Matching (to rep state) sync modes vs. moving window
-			//exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
+			//exps.plot_a(repStates);  // plot number of Matching (to rep state) sync modes vs. moving window
+			exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
 			
 		}catch(Exception io) {
 			io.printStackTrace();
