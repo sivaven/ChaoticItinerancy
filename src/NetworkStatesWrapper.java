@@ -163,9 +163,12 @@ public class NetworkStatesWrapper {
 			previous_wrapper = wrapper;
 		}		
 	}*/
-	private static Perturbation[] forInfoDecayAccum(String ipFileDir, int increments, int length, boolean applyThresh) {
-		int nPairs =99; // number of unique pairs = number of digits
-		
+	
+	/*
+	 * accumulated durations
+	 */
+	public static Perturbation[] ConstructPerturbations(String ipFileDir, int nPairs, int endPt, int dur_increments, boolean applyThresh) {
+				
 		System.out.println("Reading data...");
 		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
 		System.out.println("Reading complete...");
@@ -175,7 +178,7 @@ public class NetworkStatesWrapper {
 			nperturbs[i] = new Perturbation();
 		}		
 			
-		for(int dt=increments;dt<=length;dt=dt+increments) {
+		for(int dt=dur_increments;dt<=endPt;dt=dt+dur_increments) {
 			System.out.println(dt + "completed: ");
 			NetworkState[] _states = wrapper.constructNetworkStates(0, dt, applyThresh);
 			
@@ -187,7 +190,9 @@ public class NetworkStatesWrapper {
 		
 		return nperturbs;
 	}
-	
+	/*
+	 * moving window 
+	 */
 	public static Perturbation[] ConstructPerturbations(String ipFileDir, int nPairs, int startPt, int endPt, int mwLength, boolean applyThresh) {				
 		System.out.println("Reading data...");
 		NetworkStatesWrapper wrapper = new NetworkStatesWrapper(ipFileDir, nPairs);	
@@ -213,7 +218,7 @@ public class NetworkStatesWrapper {
 	/*
 	 * threshold application dynamic! different perturbations should get threshold applied at different durations
 	 */
-	
+	/*
 	private static Perturbation[] forInfoDecayAccum2(String ipFileDir, int increments, int length, int[] durOfRep) {
 		int nPairs =99; // number of unique pairs = number of digits
 		
@@ -249,7 +254,8 @@ public class NetworkStatesWrapper {
 						
 		
 		return nperturbs;
-	}
+	}*/
+	
 	/*
 	private static void singleDurStates() {
 		int nPairs =99; // number of unique pairs = number of bits
@@ -269,7 +275,7 @@ public class NetworkStatesWrapper {
 		}
 	}
 	*/
-	private static void writeRepStates(FileWriter fw_rep,  FileWriter fw_rep_dur, Perturbation[] perturbs) {
+	public static void writeRepStates(FileWriter fw_rep,  FileWriter fw_rep_dur, Perturbation[] perturbs) {
 		try {
 			for(int i=0;i<perturbs.length;i++) {
 				int dur_of_max_sync = perturbs[i].durationOfMaxSyncModes();
