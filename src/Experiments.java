@@ -201,6 +201,50 @@ public class Experiments {
 		fw.close();	
 	}
 	
+	/*
+	 * plot_0 version of moving window: simply the no. of SYNC modes vs TIME
+	 */
+	public void plot_c() throws IOException {
+		String opFile=DIR+"plot_c/mw_"+mwLength;
+		FileWriter fw = new FileWriter(opFile);
+		
+		boolean headernotwritten=true;
+		for(int i=0;i<perturbations.length;i++) {			
+			System.out.println("perturbation.."+(i+1));
+			
+			Set<Integer> durations = perturbations[i].getAllDurations();
+			//Collections.sort(durations);
+			
+			if(headernotwritten) { //header
+				boolean first = true;
+				for(int dur:durations) {
+					if(!first) fw.write("\t");
+					fw.write(""+dur);
+					first = false;
+				}
+				fw.write("\n");
+				headernotwritten=false;
+			}
+			boolean first = true;
+			
+			
+			for(int dur:durations) {					
+				int count = 0;
+				if(!first) {
+					count = perturbations[i].calculateSinglePhaseLockedMode(dur);
+				}
+				if(!first) fw.write("\t");
+				fw.write(""+count);
+				first = false;				
+				
+			}
+			
+			fw.write("\n");
+			fw.flush();
+		}
+		fw.close();	
+	}
+	
 	public static void main(String[] args) {
 		boolean isMovingWindow = true;
 		int mwlength = 100;
@@ -220,15 +264,15 @@ public class Experiments {
 		
 		try {
 			//exps.plot_0();			//baseline - save rep and plot: number of SYNC MODES vs. Duration
-			NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
+			//NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
 			//exps.plot_0(repStates);			//plot number of matching (to rep state) sync modes vs Duration
 			
 			/*
 			 * moving window experiments below
 			 */
 			//exps.plot_a(repStates);  // plot number of Matching (to rep state) sync modes vs. moving window
-			exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
-			
+			//exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
+			exps.plot_c();  // baseline version (plot_0) of moving window. plot: number of SYNC modes vs TIME window
 		}catch(Exception io) {
 			io.printStackTrace();
 		}
