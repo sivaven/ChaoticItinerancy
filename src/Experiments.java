@@ -250,7 +250,7 @@ public class Experiments {
 		int mwlength = 100;
 		
 		int startpt = 0;
-		int endpt = 15000;		
+		int endpt = 5000;		
 		int increments = 500;
 		
 		boolean applyThresh = true;		
@@ -264,14 +264,14 @@ public class Experiments {
 		
 		try {
 			//exps.plot_0();			//baseline - save rep and plot: number of SYNC MODES vs. Duration
-			//NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
+			NetworkState[] repStates = NetworkStatesWrapper.readRepStates(REP_STATE_FILE, N_PERTURBS, N_PAIRS);
 			//exps.plot_0(repStates);			//plot number of matching (to rep state) sync modes vs Duration
 			
 			/*
 			 * moving window experiments below
 			 */
-			//exps.plot_a(repStates);  // plot number of Matching (to rep state) sync modes vs. moving window
-			//exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
+			exps.plot_a(repStates);  // plot number of Matching (to rep state) sync modes vs. moving window
+			exps.plot_b();  // plot number of Matching (to last window) sync modes vs. moving window
 			exps.plot_c();  // baseline version (plot_0) of moving window. plot: number of SYNC modes vs TIME window
 		}catch(Exception io) {
 			io.printStackTrace();
