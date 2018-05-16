@@ -247,10 +247,10 @@ public class Experiments {
 	
 	public static void main(String[] args) {
 		boolean isMovingWindow = true;
-		int mwlength = 100;
+		int mwlength = 500;
 		
 		int startpt = 0;
-		int endpt = 5000;		
+		int endpt = 15000;		
 		int increments = 500;
 		
 		boolean applyThresh = true;		
