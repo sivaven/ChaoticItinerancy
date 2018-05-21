@@ -121,7 +121,7 @@ public class Experiments {
 	 * PL II
 	 */
 	public void plot_a(NetworkState[] repStates) throws IOException {
-		String opFile=DIR+"plot_a/mw_"+mwLength;
+		String opFile=DIR+"plot_a/nothresh_mw_"+mwLength;
 		FileWriter fw = new FileWriter(opFile);
 		
 		boolean headernotwritten=true;
@@ -160,7 +160,7 @@ public class Experiments {
 	 * Compare moving window with previous window
 	 */
 	public void plot_b() throws IOException {
-		String opFile=DIR+"plot_b/mw_"+mwLength;
+		String opFile=DIR+"plot_b/nothresh_mw_"+mwLength;
 		FileWriter fw = new FileWriter(opFile);
 		
 		boolean headernotwritten=true;
@@ -205,7 +205,7 @@ public class Experiments {
 	 * plot_0 version of moving window: simply the no. of SYNC modes vs TIME
 	 */
 	public void plot_c() throws IOException {
-		String opFile=DIR+"plot_c/mw_"+mwLength;
+		String opFile=DIR+"plot_c/nothresh_mw_"+mwLength;
 		FileWriter fw = new FileWriter(opFile);
 		
 		boolean headernotwritten=true;
@@ -253,7 +253,7 @@ public class Experiments {
 		int endpt = 15000;		
 		int increments = 500;
 		
-		boolean applyThresh = true;		
+		boolean applyThresh = false;		
 		
 		Experiments exps = null;
 		
